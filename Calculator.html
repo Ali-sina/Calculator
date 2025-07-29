@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+     <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    .calculator {
+      border: 1px solid #ccc;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .display {
+      height: 40px;
+      width: 100%;
+      margin-bottom: 10px;
+      text-align: right;
+      padding: 10px;
+      border: 1px solid #ccc;
+      font-size: 1.5rem;
+      background-color: #f9f9f9;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 60px);
+      gap: 10px;
+    }
+    button {
+      height: 60px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+   <div class="calculator">
+    <div id="display" class="display">0</div>
+    <div class="buttons">
+      <button class="digit">7</button>
+      <button class="digit">8</button>
+      <button class="digit">9</button>
+      <button class="operator">/</button>
+
+      <button class="digit">4</button>
+      <button class="digit">5</button>
+      <button class="digit">6</button>
+      <button class="operator">*</button>
+
+      <button class="digit">1</button>
+      <button class="digit">2</button>
+      <button class="digit">3</button>
+      <button class="operator">-</button>
+
+      <button class="digit">0</button>
+      <button id="clear">C</button>
+      <button id="equals">=</button>
+      <button class="operator">+</button>
+    </div>
+  </div> 
+
+  <script>
+    const display = document.getElementById('display');
+    const digitButtons = document.querySelectorAll('.digit');
+    const operatorButtons = document.querySelectorAll('.operator');
+    const equalsButton = document.getElementById('equals');
+    const clearButton = document.getElementById('clear');
+
+    let firstNumber = '';
+    let secondNumber = '';
+    let currentOperator = null;
+    let resultDisplayed = false;
+
+    function add(a, b) {
+      return a + b;
+    }
+    function subtract(a, b) {
+      return a - b;
+    }
+    function multiply(a, b) {
+      return a * b;
+    }
+    function divide(a, b) {
+      if (b === 0) return 'Nice try :)';
+      return a / b;
+    }
+
+    function operate(operator, a, b) {
+      a = parseFloat(a);
+      b = parseFloat(b);
+      switch (operator) {
+        case '+': return add(a, b);
+        case '-': return subtract(a, b);
+        case '*': return multiply(a, b);
+        case '/': return divide(a, b);
+        default: return null;
+      }
+    }
+
+    digitButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        if (resultDisplayed) {
+          display.textContent = '';
+          resultDisplayed = false;
+        }
+        if (display.textContent === '0' || currentOperator && !secondNumber) {
+          display.textContent = button.textContent;
+        } else {
+          display.textContent += button.textContent;
+        }
+        if (!currentOperator) {
+          firstNumber += button.textContent;
+        } else {
+          secondNumber += button.textContent;
+        }
+      });
+    });
+
+    operatorButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        if (currentOperator && secondNumber) {
+          const result = operate(currentOperator, firstNumber, secondNumber);
+          display.textContent = +result.toFixed(5);
+          firstNumber = result;
+          secondNumber = '';
+        }
+        currentOperator = button.textContent;
+        resultDisplayed = false;
+      });
+    });
+
+    equalsButton.addEventListener('click', () => {
+      if (firstNumber && currentOperator && secondNumber) {
+        const result = operate(currentOperator, firstNumber, secondNumber);
+        display.textContent = +result.toFixed(5);
+        firstNumber = result;
+        secondNumber = '';
+        currentOperator = null;
+        resultDisplayed = true;
+      }
+    });
+
+    clearButton.addEventListener('click', () => {
+      firstNumber = '';
+      secondNumber = '';
+      currentOperator = null;
+      resultDisplayed = false;
+      display.textContent = '0';
+    });
+  </script>
+</body>
+</html>
